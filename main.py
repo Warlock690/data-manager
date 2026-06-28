@@ -3,6 +3,9 @@ import socket
 import requests
 
 
+
+
+
 st.set_page_config(
     page_title="megagigawhat",
     page_icon="gemini.jpg",
@@ -87,6 +90,11 @@ def dns_lookup(domain):
         return f"{domain} → {ip}"
     except:
         return "Geçersiz domain veya çözümlenemedi"
+
+
+
+
+
 
 
 
