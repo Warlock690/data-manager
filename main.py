@@ -3,12 +3,25 @@ import socket
 import requests
 
 
+MAINTENANCE_MODE = True
+
+if MAINTENANCE_MODE:
+    st.set_page_config(
+        page_title="Bakım Modu",
+        page_icon="görsel/bakım.jpg",
+        layout="centered"
+    )
+
+    st.title("Sitem bakımda")
+    st.write("Lütfen daha sonra tekrar deneyiniz.")
+    st.image("görsel/bakım.jpg",width=1000)
 
 
+    st.stop()
 
 st.set_page_config(
     page_title="megagigawhat",
-    page_icon="gemini.jpg",
+    page_icon="görsel/gemini.jpg",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -27,8 +40,6 @@ footer {visibility: hidden;}
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-
-
 def sure_hesapla(hiz_mbit, transfer_tb):
     if hiz_mbit is None or hiz_mbit == 0:
         return "Hata: İnternet hızı 0 olamaz."
@@ -45,13 +56,20 @@ def sure_hesapla(hiz_mbit, transfer_tb):
     return f"{gun} gün {saat:.2f} saat"
 
 
-def yerel_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
 
+
+def get_local_ip():
+    pass
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+    except OSError:
+        return "Alınamadı"
+    finally:
+        s.close()
+
+print(get_local_ip())
 
 def genel_ip():
     return requests.get("https://ipinfo.io/ip").text
@@ -92,22 +110,14 @@ def dns_lookup(domain):
         return "Geçersiz domain veya çözümlenemedi"
 
 
-
-
-
-
-
-
-
 st.title("megagigawhat")
 
-tab1, tab2, tab3 ,tab4 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "transfer time calculate",
     "IP Tracker",
     "DNS Lookup",
     "abaut developer"
 ])
-
 
 with tab1:
     hiz = st.number_input("İnternet Hızı (Mbit)", min_value=0)
@@ -116,11 +126,9 @@ with tab1:
     if st.button("Hesapla"):
         st.success(sure_hesapla(hiz, tb))
 
-
-
 with tab2:
     if st.button("IP Bilgilerini Getir"):
-        local = yerel_ip()
+        local = get_local_ip()
         public = genel_ip()
         info = ip_bilgisi(public)
 
@@ -128,14 +136,11 @@ with tab2:
         st.write("**Genel IP:**", public)
         st.text(info)
 
-
 with tab3:
     domain = st.text_input("Domain (örnek: google.com)")
 
     if st.button("Çöz"):
         st.write(dns_lookup(domain))
-
-
 
 with tab4:
     st.header("About developer")
@@ -143,4 +148,4 @@ with tab4:
     st.markdown("Github: [https://github.com/Warlock690](https://github.com/Warlock690)")
     st.markdown("Gitlab: [https://gitlab.com/Warlock690](https://gitlab.com/Warlock690)")
     st.markdown("Netdev:[https://books.netdev.com.tr/user/warlock]")
-    st.image("mercan.jpg", width=400)
+    st.image("görsel/mercan.jpg", width=400)
